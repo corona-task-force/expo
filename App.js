@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-
+import BasicLocationExample from './basicLocationExample'
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Axios from 'axios';
 const instructions = Platform.select({
   ios: `Press Cmd+R to reload,\nCmd+D or shake for dev menu`,
   android: `Double tap R on your keyboard to reload,\nShake or press menu button for dev menu`,
@@ -9,9 +11,12 @@ const instructions = Platform.select({
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome to React Native!</Text>
+      <BasicLocationExample />
+      <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date()})}><Text>Send Post to Mongo</Text></TouchableOpacity>
+      <Text style={styles.welcome}>Welcome to React Corona Native!</Text>
       <Text style={styles.instructions}>To get started, edit App.js</Text>
       <Text style={styles.instructions}>{instructions}</Text>
+      <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/createCollection/corona', {})}><Text>Create createCollection</Text></TouchableOpacity>
     </View>
   );
 }
