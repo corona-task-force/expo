@@ -5,15 +5,20 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import * as TaskManager from 'expo-task-manager';
 import Axios from 'axios';
+import BasicMap from './basicMap'
 
 
 export default class BasicLocationExample extends Component {
   state = {
-    location: null,
+    location: {},
+    places: [],
     errorMessage: null,
   };
 
   componentDidMount() {
+    Axios.get('https://ironrest.herokuapp.com/corona').then(res => {
+        this.setState({places:res.data})
+    })
     Location.startLocationUpdatesAsync('taskName',  {
         accuracy: Location.Accuracy.Highest,
         foregroundService:
@@ -70,6 +75,8 @@ export default class BasicLocationExample extends Component {
 
     return (
       <View style={styles.container}>
+        <BasicMap location={this.state.location} places={this.state.places} />
+
         <Text style={styles.paragraph}>{text}</Text>
       </View>
     );
