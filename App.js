@@ -13,7 +13,7 @@ export default function App() {
     <View style={styles.container}>
       <BasicLocationExample />
       <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date()})}><Text>Send Post to Mongo</Text></TouchableOpacity>
-      <Text style={styles.welcome}>Welcome to React Corona Native!</Text>
+      <Text style={styles.welcome}>Lets do this!</Text>
       <Text style={styles.instructions}>To get started, edit App.js</Text>
       <Text style={styles.instructions}>{instructions}</Text>
       <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/createCollection/corona', {})}><Text>Create createCollection</Text></TouchableOpacity>
