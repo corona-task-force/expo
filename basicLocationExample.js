@@ -87,7 +87,7 @@ export default class BasicLocationExample extends Component {
   _getLocationAsync = async () => {
     // let { status } = await Permissions.askAsync(Permissions.LOCATION);
     let { status } = await Location.requestPermissionsAsync();
-    alert('status', status)
+    alert(JSON.stringify(status))
     if (status !== 'granted') {
       this.setState({
         errorMessage: 'Permission to access location was denied',
@@ -106,7 +106,7 @@ export default class BasicLocationExample extends Component {
           notificationBody: "Running gps for locations.",
           notificationColor: "#000000"
         }
-      }).catch(err => alert({ which: "startLocationUpdatesAsync", error: err.message }))
+      }).catch(err => alert(JSON.stringify({ which: "startLocationUpdatesAsync", error: err.message })))
       TaskManager.defineTask('differentTaskName', ({ data: { locations }, error }) => {
         if (error) {
           console.error('err: ', error.message)
