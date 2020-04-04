@@ -125,10 +125,11 @@ export default class BasicLocationExample extends Component {
     this.setState({ location });
   }
   
+  
   // await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
   //   accuracy: Location.Accuracy.Balanced,
   // });
-}
+
 //};
 
 //  };
