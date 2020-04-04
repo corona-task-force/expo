@@ -44,10 +44,11 @@ export default class BasicLocationExample extends Component {
   //   }).catch(err => alert({which:"define task", error: err.message}))
   // }
 
-  // componentDidMount() {
-  //   Axios.get('https://ironrest.herokuapp.com/corona').then(res => {
-  //       this.setState({places:res.data})
-  //   })
+  componentDidMount() {
+    Axios.get('https://ironrest.herokuapp.com/corona').then(res => {
+        this.setState({places:res.data})
+    })
+  }
   //   // await Location.startLocationUpdatesAsync('taskName',  {
   //   //     accuracy: Location.Accuracy.Highest,
   //   //     showsBackgroundLocationIndicator: this.state.showsBackgroundLocationIndicator,
@@ -94,6 +95,9 @@ export default class BasicLocationExample extends Component {
       });
 
     } else {
+      let location = await Location.getCurrentPositionAsync({});
+      alert(JSON.stringify(location))
+      this.setState({ location });
 
       Location.startLocationUpdatesAsync('differentTaskName', {
         accuracy: Location.Accuracy.Highest,
@@ -107,6 +111,8 @@ export default class BasicLocationExample extends Component {
           notificationColor: "#000000"
         }
       }).catch(err => alert(JSON.stringify({ which: "startLocationUpdatesAsync", error: err.message })))
+
+
       TaskManager.defineTask('differentTaskName', ({ data: { locations }, error }) => {
         if (error) {
           console.error('err: ', error.message)
@@ -119,10 +125,9 @@ export default class BasicLocationExample extends Component {
         let deviceName = Constants.deviceName
         Axios.post('https://ironrest.herokuapp.com/corona/', { time: new Date(), locations: locations, deviceName: deviceName })
         console.log('Received new locations', locations);
-      }).catch(err => alert({ which: "define task", error: err.message }))
+      }).catch(err => alert(JSON.stringify({ which: "define task", error: err.message })))
     }
-    let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
+
   }
   
   
