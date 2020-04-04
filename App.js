@@ -12,9 +12,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <BasicLocationExample />
-      <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date()})}><Text>Send Post to Mongo</Text></TouchableOpacity>
-      <Text style={styles.welcome}>Cool</Text>
-      <Text style={styles.instructions}>To get started, edit App.js</Text>
+      <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), animal:'Penguin'})}><Text>Send Post to Mongo</Text></TouchableOpacity>
+      <Text style={styles.welcome}>deviceName u</Text>
+      <Text style={styles.instructions}>Penguin</Text>
       <Text style={styles.instructions}>{instructions}</Text>
       <TouchableOpacity onPress={() => Axios.post('https://ironrest.herokuapp.com/createCollection/corona', {})}><Text>Create createCollection</Text></TouchableOpacity>
     </View>
