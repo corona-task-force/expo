@@ -57,3 +57,7 @@ buck-out/
 
 # Expo
 .expo/*
+
+# iOS build files
+ios/Pods/*
+ios/Pods
