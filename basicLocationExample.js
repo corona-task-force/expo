@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -19,7 +19,7 @@ export default class BasicLocationExample extends Component {
   }
 
   componentDidMount() {
-    Axios.get("https://ironrest.herokuapp.com/corona")
+    Axios.get("https://ironrest.herokuapp.com/covid")
       .then((res) => {
         this.setState({ places: res.data });
       })
@@ -29,58 +29,15 @@ export default class BasicLocationExample extends Component {
         }
       });
   }
-
-  // startLocation = () => {
-  //   Location.startLocationUpdatesAsync('differentTaskName',  {
-  //     accuracy: Location.Accuracy.Highest,
-  //     showsBackgroundLocationIndicator: this.state.showsBackgroundLocationIndicator,
-  //     timeInterval: 2500,
-  //     distanceInterval: 5,
-  //     foregroundService:
-  //     {
-  //         notificationTitle:"yo buddy2",
-  //         notificationBody :"Running gps for locations.",
-  //         notificationColor :"#000000"
-  //     }
-  // }).catch(err => alert({which:"startLocationUpdatesAsync", error: err.message}))
-  // TaskManager.defineTask('differentTaskName', ({ data: { locations }, error }) => {
-  //     if (error) {
-  //         console.error('err: ',error.message)
-  //         Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), error:error.message})
-
-  //       // check `error.message` for more details.
-  //       return;
-  //     }
-  //     let constants = Constants;
-  //     Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), locations:locations, constants:constants})
-  //     console.log('Received new locations', locations);
-  //   }).catch(err => alert({which:"define task", error: err.message}))
-  // }
-
-  //   // await Location.startLocationUpdatesAsync('taskName',  {
-  //   //     accuracy: Location.Accuracy.Highest,
-  //   //     showsBackgroundLocationIndicator: this.state.showsBackgroundLocationIndicator,
-  //   //     timeInterval: 2500,
-  //   //     distanceInterval: 5,
-  //   //     foregroundService:
-  //   //     {
-  //   //         notificationTitle:"yo buddy",
-  //   //         notificationBody :"Running gps for locations.",
-  //   //         notificationColor :"#000000"
-  //   //     }
-  //   // }).catch(err => alert('sherwino is the best'))
-  //   TaskManager.defineTask('taskName', ({ data: { locations }, error }) => {
-  //          console.error('err: ',error.message)
-  //           Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), error:error.message})
-
-  //         // check `error.message` for more details.
-  //         return;
-  //       }
-  //       let deviceName = Constants.deviceName;
-  //       Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), locations:locations, deviceName:deviceName})
-  //       console.log('Received new locations', locations);
-  //     }).catch(err => alert('sherwino is the best'))
-  //}
+  startLocation(location) {
+    console.log("startLocation Button pressed");
+    Axios.post("https://ironrest.herokuapp.com/covid/", {
+      time: new Date(),
+      animal: "Panda and a Penguin",
+      deviceName,
+      location: this.state.location,
+    });
+  }
 
   defineTask(taskName) {
     TaskManager.defineTask(taskName, ({ data: { locations }, error }) => {
@@ -88,7 +45,7 @@ export default class BasicLocationExample extends Component {
         console.error("defineTask() err: ", error.message);
         this.setState({ errorMessage: error });
 
-        Axios.post("https://ironrest.herokuapp.com/corona/", {
+        Axios.post("https://ironrest.herokuapp.com/covid/", {
           time: new Date(),
           error: error.message,
           deviceName: deviceName,
@@ -99,7 +56,7 @@ export default class BasicLocationExample extends Component {
 
       // let constants = Constants;
       let deviceName = Constants.deviceName;
-      Axios.post("https://ironrest.herokuapp.com/corona/", {
+      Axios.post("https://ironrest.herokuapp.com/covid/", {
         time: new Date(),
         locations: locations,
         deviceName: deviceName,
@@ -129,14 +86,14 @@ export default class BasicLocationExample extends Component {
 
       this.setState({ location });
 
-      await Location.startLocationUpdatesAsync("differentTaskName", {
+      await Location.startLocationUpdatesAsync("startLocationUpdatesAsync", {
         accuracy: Location.Accuracy.Highest,
         showsBackgroundLocationIndicator: true, //iOS only
         timeInterval: 2500, // Android Only
         distanceInterval: 5,
         pausesUpdatesAutomatically: true, //iOS only
         foregroundService: {
-          notificationTitle: "yo buddy2",
+          notificationTitle: "yo buddy3",
           notificationBody: "Running gps for locations.",
           notificationColor: "#000000",
         },
@@ -177,7 +134,7 @@ export default class BasicLocationExample extends Component {
       <View style={styles.container}>
         {location && places && <BasicMap location={location} places={places} />}
         <TouchableOpacity onPress={this.startLocation}>
-          <Text>startLocation!!!!</Text>
+          <Text>Post Location to Mongo (Manually)</Text>
         </TouchableOpacity>
         <Text style={styles.paragraph}>{text}</Text>
       </View>
