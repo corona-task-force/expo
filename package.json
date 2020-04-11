@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "expo": "~37.0.3",
+    "expo-background-fetch": "^8.1.0",
     "expo-location": "^8.1.0",
     "expo-task-manager": "^8.1.0",
     "expo-updates": "~0.1.0",

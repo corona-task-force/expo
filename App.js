@@ -19,13 +19,13 @@ export default function App() {
           Axios.post("https://ironrest.herokuapp.com/covid/", {
             time: new Date(),
             animal: "Panda",
-            deviceName,
+            deviceName: deviceName,
           })
         }
       >
         <Text>Send Post to Mongo</Text>
       </TouchableOpacity>
-      <Text style={styles.welcome}>deviceName</Text>
+      <Text style={styles.welcome}>{deviceName}</Text>
       <Text style={styles.instructions}>Panda</Text>
       <Text style={styles.instructions}>{instructions}</Text>
       <TouchableOpacity

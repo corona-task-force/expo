@@ -4,9 +4,13 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
+
 import Axios from "axios";
 import BasicMap from "./basicMap";
 import { TouchableOpacity } from "react-native-gesture-handler";
+
+const DEVICE_NAME = Constants?.DEVICE_NAME;
 
 export default class BasicLocationExample extends Component {
   constructor(props) {
@@ -28,47 +32,37 @@ export default class BasicLocationExample extends Component {
           this._getLocationAsync();
         }
       });
+
+    TaskManager.isTaskRegisteredAsync("startLocationUpdatesAsync").then(
+      (isRegistered) => {
+        console.log("task is registered", isRegistered);
+      }
+    );
+
+    TaskManager.getRegisteredTasksAsync("startLocationUpdatesAsync").then(
+      (registeredTasks) => {
+        console.log("registeredTasks tasks", registeredTasks);
+      }
+    );
+
+    TaskManager.getTaskOptionsAsync("startLocationUpdatesAsync").then(
+      (taskOptions) => {
+        console.log("registered taskOptions", taskOptions);
+      }
+    );
   }
-  startLocation(location) {
+  startLocation() {
+    const location = this.state?.location;
+
     console.log("startLocation Button pressed");
     Axios.post("https://ironrest.herokuapp.com/covid/", {
       time: new Date(),
       animal: "Panda and a Penguin",
-      deviceName,
-      location: this.state.location,
+      DEVICE_NAME,
+      location,
     });
   }
 
-  defineTask(taskName) {
-    TaskManager.defineTask(taskName, ({ data: { locations }, error }) => {
-      if (error) {
-        console.error("defineTask() err: ", error.message);
-        this.setState({ errorMessage: error });
-
-        Axios.post("https://ironrest.herokuapp.com/covid/", {
-          time: new Date(),
-          error: error.message,
-          deviceName: deviceName,
-        });
-
-        return;
-      }
-
-      // let constants = Constants;
-      let deviceName = Constants.deviceName;
-      Axios.post("https://ironrest.herokuapp.com/covid/", {
-        time: new Date(),
-        locations: locations,
-        deviceName: deviceName,
-      });
-      console.log("Received new locations", { locations });
-    })
-      .then((res) => {
-        console.log("axios response", { res, Constants });
-        return;
-      })
-      .catch((err) => console.log("define task", { err }));
-  }
   // Expo said they don't support background location updates
   // https://forums.expo.io/t/plist-configuration-options-are-not-recognised/23812/2
   _getLocationAsync = async () => {
@@ -91,33 +85,20 @@ export default class BasicLocationExample extends Component {
         showsBackgroundLocationIndicator: true, //iOS only
         timeInterval: 2500, // Android Only
         distanceInterval: 5,
-        pausesUpdatesAutomatically: true, //iOS only
+        pausesUpdatesAutomatically: false, //iOS only
         foregroundService: {
           notificationTitle: "yo buddy3",
           notificationBody: "Running gps for locations.",
           notificationColor: "#000000",
         },
-      })
-        .then((result) => {
-          console.log("startLocationUpdatesAsync registered", { result });
-          this.defineTask("startLocationUpdatesAsync");
-
-          return;
-        })
-        .catch((err) => {
-          console.log("getlocationasync3", { err });
-          this.setState({ errorMessage: err });
-        });
+      }).catch((err) => {
+        console.log("getlocationasync3 caught an error bitch", { err });
+        this.setState({ errorMessage: err });
+      });
+      console.log("startLocationUpdatesAsync registered");
+      // this.defineTask("startLocationUpdatesAsync");
     }
   };
-
-  // await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-  //   accuracy: Location.Accuracy.Balanced,
-  // });
-
-  //};
-
-  //  };
 
   render() {
     const { location, errorMessage, places } = this.state;
@@ -156,3 +137,83 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+function ourOwnCallback(...args) {
+  console.log("ourOwnCallback", { ...args });
+}
+console.log("before the task is defined", TaskManager.defineTask);
+TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {
+  if (error) {
+    console.error("defineTask() err: ", error.message);
+    this.setState({ errorMessage: error });
+
+    Axios.post("https://ironrest.herokuapp.com/covid/", {
+      time: new Date(),
+      error: error.message,
+      deviceName: DEVICE_NAME,
+    });
+
+    return;
+  }
+  console.log("TaskManager.defineTask is returning these", { data, error });
+
+  if (data) {
+    const locations = data?.locations;
+    Axios.post("https://ironrest.herokuapp.com/covid/", {
+      time: new Date(),
+      locations,
+      DEVICE_NAME,
+    })
+      .then((res) => {
+        console.log("axios response", { res, Constants });
+        return;
+      })
+      .catch((err) => console.log("define task", { err }));
+  }
+});
+
+TaskManager.defineTask("backgroundWhatever", ourOwnCallback);
+
+// async function status() {
+//   await BackgroundFetch.getStatusAsync();
+// }
+
+// async function getRegisteredTasksAsync() {
+//   await TaskManager.getRegisteredTasksAsync();
+// }
+
+// async function registerTaskAsync() {
+//   await BackgroundFetch.registerTaskAsync("backgroundWhatever");
+// }
+
+// async function setMinimumIntervalAsync() {
+//   await BackgroundFetch.setMinimumIntervalAsync(2000);
+// }
+
+// switch (status()) {
+//   case BackgroundFetch.Status.Restricted:
+//   case BackgroundFetch.Status.Denied:
+//     console.log("Background execution is disabled");
+
+//   default: {
+//     console.debug("Background execution allowed");
+
+//     let tasks = getRegisteredTasksAsync();
+//     if (
+//       tasks &&
+//       tasks.find((f) => f.taskName === "backgroundWhatever") == null
+//     ) {
+//       console.log("Registering task");
+//       registerTaskAsync();
+
+//       tasks = getRegisteredTasksAsync();
+//       console.debug("Registered tasks", tasks);
+//     } else {
+//       console.log(`Task ${"backgroundWhatever"} already registered, skipping`);
+//     }
+
+//     console.log("Setting interval to", 2000);
+//     setMinimumIntervalAsync(2000);
+//   }
+// }
+// console.log("after the task is defined");
