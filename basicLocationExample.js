@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
 function ourOwnCallback(...args) {
   console.log("ourOwnCallback", { ...args });
 }
+
 console.log("before the task is defined", TaskManager.defineTask);
 TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {
   if (error) {
@@ -159,10 +160,15 @@ TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {
 
   if (data) {
     const locations = data?.locations;
+    console.log("got data in define task", {
+      data,
+      locations,
+      deviceName: DEVICE_NAME,
+    });
     Axios.post("https://ironrest.herokuapp.com/covid/", {
       time: new Date(),
       locations,
-      DEVICE_NAME,
+      deviceName: DEVICE_NAME,
     })
       .then((res) => {
         console.log("axios response", { res, Constants });
@@ -171,8 +177,6 @@ TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {
       .catch((err) => console.log("define task", { err }));
   }
 });
-
-TaskManager.defineTask("backgroundWhatever", ourOwnCallback);
 
 // async function status() {
 //   await BackgroundFetch.getStatusAsync();
