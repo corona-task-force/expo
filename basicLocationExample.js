@@ -4,7 +4,6 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import * as TaskManager from "expo-task-manager";
-import * as BackgroundFetch from "expo-background-fetch";
 
 import Axios from "axios";
 import BasicMap from "./basicMap";

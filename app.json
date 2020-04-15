@@ -1,12 +1,18 @@
 {
-  "name": "corona",
-  "displayName": "corona",
+  "name": "virotrackattack",
+  "displayName": "virotrackattack",
   "expo": {
-    "name": "corona",
-    "slug": "corona",
+    "name": "virotrackattack",
+    "slug": "virotrackattack",
     "version": "1.0.0",
-    "platforms": ["ios", "android", "web"],
-    "assetBundlePatterns": ["**/*"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "infoPlist": {
         "UIBackgroundModes": [
@@ -18,7 +24,12 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Your current location will be used to enable location based push notifications.",
         "NSLocationAlwaysUsageDescription": "Your current location will be used to enable location based push notifications",
         "NSLocationWhenInUseUsageDescription": "Your current location will be used to enable location based push notifications"
-      }
-    }
+      },
+      "bundleIdentifier": "com.virotrackattack"
+    },
+    "android": {
+      "package": "com.virotrackattack"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
