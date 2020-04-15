@@ -1,9 +1,9 @@
 {
-  "name": "virotrackattack",
-  "displayName": "virotrackattack",
+  "name": "viruviru",
+  "displayName": "viruviru",
   "expo": {
-    "name": "virotrackattack",
-    "slug": "virotrackattack",
+    "name": "viruviru",
+    "slug": "viruviru",
     "version": "1.0.0",
     "platforms": [
       "ios",
@@ -25,10 +25,10 @@
         "NSLocationAlwaysUsageDescription": "Your current location will be used to enable location based push notifications",
         "NSLocationWhenInUseUsageDescription": "Your current location will be used to enable location based push notifications"
       },
-      "bundleIdentifier": "com.virotrackattack"
+      "bundleIdentifier": "com.viruviru"
     },
     "android": {
-      "package": "com.virotrackattack"
+      "package": "com.viruviru"
     },
     "entryPoint": "node_modules/expo/AppEntry.js"
   }
