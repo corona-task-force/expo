@@ -4,13 +4,13 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import * as TaskManager from "expo-task-manager";
-import * as BackgroundFetch from "expo-background-fetch";
 
 import Axios from "axios";
 import BasicMap from "./basicMap";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const DEVICE_NAME = Constants?.DEVICE_NAME;
+const DEVICE_NAME = Constants?.deviceName;
+const DEVICE_ID = Constants?.deviceId;
 
 export default class BasicLocationExample extends Component {
   constructor(props) {
@@ -19,6 +19,7 @@ export default class BasicLocationExample extends Component {
       location: null,
       places: null,
       errorMessage: null,
+      lastSubmitted: null,
     };
   }
 
@@ -51,6 +52,7 @@ export default class BasicLocationExample extends Component {
       }
     );
   }
+
   startLocation() {
     const location = this.state?.location;
 
@@ -156,68 +158,25 @@ TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {
 
     return;
   }
-  console.log("TaskManager.defineTask is returning these", { data, error });
 
   if (data) {
     const locations = data?.locations;
-    console.log("got data in define task", {
-      data,
-      locations,
-      deviceName: DEVICE_NAME,
-    });
     Axios.post("https://ironrest.herokuapp.com/covid/", {
       time: new Date(),
       locations,
       deviceName: DEVICE_NAME,
+      deviceId: 1337, // It should be DEVICE_ID, but waiting til we have a secure endpoint
     })
       .then((res) => {
-        console.log("axios response", { res, Constants });
+        console.log("MongoResponse", {
+          res: res?.data,
+          insertedCount: res?.data?.insertedCount,
+          insertedId: res?.data?.insertedId,
+        });
         return;
       })
-      .catch((err) => console.log("define task", { err }));
+      .catch((err) => {
+        console.error("define task error", { err });
+      });
   }
 });
-
-// async function status() {
-//   await BackgroundFetch.getStatusAsync();
-// }
-
-// async function getRegisteredTasksAsync() {
-//   await TaskManager.getRegisteredTasksAsync();
-// }
-
-// async function registerTaskAsync() {
-//   await BackgroundFetch.registerTaskAsync("backgroundWhatever");
-// }
-
-// async function setMinimumIntervalAsync() {
-//   await BackgroundFetch.setMinimumIntervalAsync(2000);
-// }
-
-// switch (status()) {
-//   case BackgroundFetch.Status.Restricted:
-//   case BackgroundFetch.Status.Denied:
-//     console.log("Background execution is disabled");
-
-//   default: {
-//     console.debug("Background execution allowed");
-
-//     let tasks = getRegisteredTasksAsync();
-//     if (
-//       tasks &&
-//       tasks.find((f) => f.taskName === "backgroundWhatever") == null
-//     ) {
-//       console.log("Registering task");
-//       registerTaskAsync();
-
-//       tasks = getRegisteredTasksAsync();
-//       console.debug("Registered tasks", tasks);
-//     } else {
-//       console.log(`Task ${"backgroundWhatever"} already registered, skipping`);
-//     }
-
-//     console.log("Setting interval to", 2000);
-//     setMinimumIntervalAsync(2000);
-//   }
-// }
-// console.log("after the task is defined");

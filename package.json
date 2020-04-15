@@ -7,7 +7,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@mauron85/react-native-background-geolocation": "^0.6.3",
     "axios": "^0.19.2",
     "expo": "~37.0.3",
     "expo-background-fetch": "^8.1.0",
