@@ -133,16 +133,18 @@ const styles = StyleSheet.create({
     paddingTop: Constants.statusBarHeight,
     backgroundColor: "#ecf0f1",
   },
+  button: {
+    flex: 1,
+    backgroundColor: "#000",
+    color: "#fff",
+    fontSize: 18,
+  },
   paragraph: {
     margin: 24,
     fontSize: 18,
     textAlign: "center",
   },
 });
-
-function ourOwnCallback(...args) {
-  console.log("ourOwnCallback", { ...args });
-}
 
 console.log("before the task is defined", TaskManager.defineTask);
 TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {

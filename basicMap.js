@@ -5,7 +5,6 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 export default class BasicMap extends React.Component {
   renderMarkers() {
     return this.props.places.map((place, i) => {
-      // console.log('iguana', place.locations, '!')
       if (place.locations) {
         return (
           <MapView.Marker

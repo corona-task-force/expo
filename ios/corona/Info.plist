@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>corona</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -49,6 +49,8 @@
 	<string>Your current location will be used to enable location based push notifications</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your current location will be used to enable location based push notifications</string>
+	<key>NSMainNibFile</key>
+	<string>LaunchScreen</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow corona to access your microphone</string>
 	<key>NSMotionUsageDescription</key>

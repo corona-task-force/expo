@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import Constants from "expo-constants";
-import BasicLocationExample from "./basicLocationExample";
+// import BasicLocationExample from "./basicLocationExample";
+import { MapComponent } from "./MapComponent";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Axios from "axios";
 const instructions = Platform.select({
@@ -13,10 +14,11 @@ export default function App() {
   let deviceName = Constants?.deviceName;
   return (
     <View style={styles.container}>
-      <BasicLocationExample />
+      {/* <BasicLocationExample /> */}
+      <MapComponent />
       <TouchableOpacity
         onPress={() =>
-          Axios.post("https://ironrest.herokuapp.com/covid/", {
+          Axios.post("https://ironrest.herokuapp.com/corona/", {
             time: new Date(),
             animal: "Panda",
             deviceName: deviceName,
@@ -31,7 +33,7 @@ export default function App() {
       <TouchableOpacity
         onPress={() =>
           Axios.post(
-            "https://ironrest.herokuapp.com/createCollection/covid",
+            "https://ironrest.herokuapp.com/createCollection/corona",
             {}
           )
         }
