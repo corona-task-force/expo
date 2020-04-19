@@ -20,13 +20,18 @@ export default class BasicMap extends React.Component {
   }
   render() {
     // console.log('basic', this.props)
+    const { coords } = this.props?.location;
+    const latitude = coords?.latitude;
+    const longitude = coords?.longitude;
+
+    console.log({ coords, latitude, longitude });
     // https://github.com/react-native-community/react-native-maps/issues/693#issuecomment-262656417
     return this.props.location.coords ? (
       <View style={styles.container}>
         <MapView
           initialRegion={{
-            latitude: 25.8378883,
-            longitude: -80.1753357,
+            latitude: latitude,
+            longitude: longitude,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}

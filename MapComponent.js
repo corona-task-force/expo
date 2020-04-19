@@ -9,7 +9,7 @@ import Axios from "axios";
 import BasicMap from "./basicMap";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-var LAST = {};
+var LAST;
 const DEVICE_NAME = Constants?.deviceName;
 const DEVICE_ID = Constants?.deviceId;
 
@@ -32,6 +32,7 @@ export function MapComponent() {
       setLocation(location);
       setPlaces(placesArr);
       startBackgroundLocationUpdates();
+      console.log("render at useeffect");
     })();
   }, [LAST]);
 
@@ -78,9 +79,8 @@ export function MapComponent() {
   // ----------------------------------------------------------------
   // Get all of the location data we have stored on the database
   const getSavedLocations = async () => {
-    const res = await Axios.get("https://ironrest.herokuapp.com/corona");
-    setPlaces(res?.data);
-    console.log("getSavedLocations");
+    const res = await Axios.get("https://ironrest.herokuapp.com/covid");
+    console.log("getSavedLocations", { places, res });
     return res?.data;
   };
 
@@ -150,7 +150,8 @@ export function MapComponent() {
 
   const currentStatus = !errorMsg ? status : errorMsg?.message;
   const renderMap = currentLocation && places;
-  console.log("render map", status);
+
+  console.log("render map", { currentStatus, renderMap });
   return (
     <View style={styles.container}>
       {renderMap && <BasicMap location={currentLocation} places={places} />}
@@ -198,14 +199,13 @@ TaskManager.defineTask("viru", ({ data, error }) => {
       locations,
       updatedFrom: "background",
       deviceName: DEVICE_NAME,
-      deviceId: 1337, // It should be DEVICE_ID, but waiting til we have a secure endpoint
+      deviceId: DEVICE_ID, // It should be DEVICE_ID, but waiting til we have a secure endpoint
     })
       .then((res) => {
-        // Context Provider instead of using this global var
         LAST = {
           locations,
           deviceName: DEVICE_NAME,
-          deviceId: 1337, // It should be DEVICE_ID, but
+          deviceId: DEVICE_ID, // It should be DEVICE_ID, but
           res: res?.data,
           insertedCount: res?.data?.insertedCount,
           insertedId: res?.data?.insertedId,
