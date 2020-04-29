@@ -1,9 +1,9 @@
 {
-  "name": "corona",
-  "displayName": "corona",
+  "name": "viruviru",
+  "displayName": "viruviru",
   "expo": {
-    "name": "corona",
-    "slug": "corona",
+    "name": "viruviru",
+    "slug": "viruviru",
     "version": "1.0.0",
     "platforms": [
       "ios",
@@ -24,8 +24,12 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Your current location will be used to enable location based push notifications.",
         "NSLocationAlwaysUsageDescription": "Your current location will be used to enable location based push notifications",
         "NSLocationWhenInUseUsageDescription": "Your current location will be used to enable location based push notifications"
-      }
-    }
+      },
+      "bundleIdentifier": "com.viruviru"
+    },
+    "android": {
+      "package": "com.viruviru"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
-

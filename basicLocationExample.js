@@ -1,173 +1,184 @@
-import React, { Component } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
-import * as TaskManager from 'expo-task-manager';
-import Axios from 'axios';
-import BasicMap from './basicMap'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React, { Component } from "react";
+import { Text, View, StyleSheet } from "react-native";
+import Constants from "expo-constants";
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
+import * as TaskManager from "expo-task-manager";
 
+import Axios from "axios";
+import BasicMap from "./basicMap";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+const DEVICE_NAME = Constants?.deviceName;
+const DEVICE_ID = Constants?.deviceId;
 
 export default class BasicLocationExample extends Component {
-  state = {
-    location: {},
-    places: [],
-    errorMessage: null,
-  };
-
-
-  // startLocation = () => {
-  //   Location.startLocationUpdatesAsync('differentTaskName',  {
-  //     accuracy: Location.Accuracy.Highest,
-  //     showsBackgroundLocationIndicator: this.state.showsBackgroundLocationIndicator,
-  //     timeInterval: 2500,
-  //     distanceInterval: 5,
-  //     foregroundService:
-  //     {
-  //         notificationTitle:"yo buddy2",
-  //         notificationBody :"Running gps for locations.",
-  //         notificationColor :"#000000"
-  //     }
-  // }).catch(err => alert({which:"startLocationUpdatesAsync", error: err.message}))
-  // TaskManager.defineTask('differentTaskName', ({ data: { locations }, error }) => {
-  //     if (error) {
-  //         console.error('err: ',error.message)
-  //         Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), error:error.message})
-
-  //       // check `error.message` for more details.
-  //       return;
-  //     }
-  //     let constants = Constants; 
-  //     Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), locations:locations, constants:constants})
-  //     console.log('Received new locations', locations);
-  //   }).catch(err => alert({which:"define task", error: err.message}))
-  // }
-
-  componentDidMount() {
-    Axios.get('https://ironrest.herokuapp.com/corona').then(res => {
-        this.setState({places:res.data})
-    })
-  }
-  //   // await Location.startLocationUpdatesAsync('taskName',  {
-  //   //     accuracy: Location.Accuracy.Highest,
-  //   //     showsBackgroundLocationIndicator: this.state.showsBackgroundLocationIndicator,
-  //   //     timeInterval: 2500,
-  //   //     distanceInterval: 5,
-  //   //     foregroundService:
-  //   //     {
-  //   //         notificationTitle:"yo buddy",
-  //   //         notificationBody :"Running gps for locations.",
-  //   //         notificationColor :"#000000"
-  //   //     }
-  //   // }).catch(err => alert('sherwino is the best'))
-  //   TaskManager.defineTask('taskName', ({ data: { locations }, error }) => {
-  //          console.error('err: ',error.message)
-  //           Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), error:error.message})
-
-  //         // check `error.message` for more details.
-  //         return;
-  //       }
-  //       let deviceName = Constants.deviceName; 
-  //       Axios.post('https://ironrest.herokuapp.com/corona/', {time: new Date(), locations:locations, deviceName:deviceName})
-  //       console.log('Received new locations', locations);
-  //     }).catch(err => alert('sherwino is the best'))
-  //}
-
   constructor(props) {
     super(props);
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-      this._getLocationAsync();
-    }
+    this.state = {
+      location: null,
+      places: null,
+      errorMessage: null,
+      lastSubmitted: null,
+    };
   }
 
-  _getLocationAsync = async () => {
-    // let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    let { status } = await Location.requestPermissionsAsync();
-    alert(JSON.stringify(status))
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
+  componentDidMount() {
+    Axios.get("https://ironrest.herokuapp.com/covid")
+      .then((res) => {
+        this.setState({ places: res.data });
+      })
+      .then((res) => {
+        if (!this.state.location) {
+          this._getLocationAsync();
+        }
       });
 
+    TaskManager.isTaskRegisteredAsync("startLocationUpdatesAsync").then(
+      (isRegistered) => {
+        console.log("task is registered", isRegistered);
+      }
+    );
+
+    TaskManager.getRegisteredTasksAsync("startLocationUpdatesAsync").then(
+      (registeredTasks) => {
+        console.log("registeredTasks tasks", registeredTasks);
+      }
+    );
+
+    TaskManager.getTaskOptionsAsync("startLocationUpdatesAsync").then(
+      (taskOptions) => {
+        console.log("registered taskOptions", taskOptions);
+      }
+    );
+  }
+
+  startLocation() {
+    const location = this.state?.location;
+
+    console.log("startLocation Button pressed");
+    Axios.post("https://ironrest.herokuapp.com/covid/", {
+      time: new Date(),
+      animal: "Panda and a Penguin",
+      DEVICE_NAME,
+      location,
+    });
+  }
+
+  // Expo said they don't support background location updates
+  // https://forums.expo.io/t/plist-configuration-options-are-not-recognised/23812/2
+  _getLocationAsync = async () => {
+    let statusTwo = await Permissions.askAsync(Permissions.LOCATION);
+    let { status } = await Location.requestPermissionsAsync();
+    console.log("getlocationasync1", { status, state: this.state, statusTwo });
+
+    if (status !== "granted") {
+      this.setState({
+        errorMessage: "Permission to access location was denied",
+      });
     } else {
       let location = await Location.getCurrentPositionAsync({});
-      alert(JSON.stringify(location))
+      console.log("getlocationasync2", { location });
+
       this.setState({ location });
 
-      Location.startLocationUpdatesAsync('differentTaskName', {
+      await Location.startLocationUpdatesAsync("startLocationUpdatesAsync", {
         accuracy: Location.Accuracy.Highest,
-        showsBackgroundLocationIndicator: this.state.showsBackgroundLocationIndicator,
-        timeInterval: 2500,
+        showsBackgroundLocationIndicator: true, //iOS only
+        timeInterval: 2500, // Android Only
         distanceInterval: 5,
-        foregroundService:
-        {
-          notificationTitle: "yo buddy2",
+        pausesUpdatesAutomatically: false, //iOS only
+        foregroundService: {
+          notificationTitle: "yo buddy3",
           notificationBody: "Running gps for locations.",
-          notificationColor: "#000000"
-        }
-      }).catch(err => alert(JSON.stringify({ which: "startLocationUpdatesAsync", error: err.message })))
+          notificationColor: "#000000",
+        },
+      }).catch((err) => {
+        console.log("getlocationasync3 caught an error bitch", { err });
+        this.setState({ errorMessage: err });
+      });
+      console.log("startLocationUpdatesAsync registered");
+      // this.defineTask("startLocationUpdatesAsync");
+    }
+  };
 
-
-      TaskManager.defineTask('differentTaskName', ({ data: { locations }, error }) => {
-        if (error) {
-          console.error('err: ', error.message)
-          Axios.post('https://ironrest.herokuapp.com/corona/', { time: new Date(), error: error.message, deviceName:deviceName })
-
-          // check `error.message` for more details.
-          return;
-        }
-        let constants = Constants;
-        let deviceName = Constants.deviceName
-        Axios.post('https://ironrest.herokuapp.com/corona/', { time: new Date(), locations: locations, deviceName: deviceName })
-        console.log('Received new locations', locations);
-      }).catch(err => alert(JSON.stringify({ which: "define task", error: err.message })))
+  render() {
+    const { location, errorMessage, places } = this.state;
+    let text = "Waiting..";
+    if (errorMessage) {
+      text = errorMessage.message;
+    } else if (location) {
+      text = JSON.stringify(location);
     }
 
+    console.log("render", { location, errorMessage, places, text });
+
+    return (
+      <View style={styles.container}>
+        {location && places && <BasicMap location={location} places={places} />}
+        <TouchableOpacity onPress={this.startLocation}>
+          <Text>Post Location to Mongo (Manually)</Text>
+        </TouchableOpacity>
+        <Text style={styles.paragraph}>{text}</Text>
+      </View>
+    );
   }
-  
-  
-  // await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-  //   accuracy: Location.Accuracy.Balanced,
-  // });
-
-//};
-
-//  };
-
-render() {
-  let text = 'Waiting..';
-  if (this.state.errorMessage) {
-    text = this.state.errorMessage;
-  } else if (this.state.location) {
-    text = JSON.stringify(this.state.location);
-  }
-
-  return (
-    <View style={styles.container}>
-      <BasicMap location={this.state.location} places={this.state.places} />
-      <TouchableOpacity onPress={this.startLocation}><Text>startLocation!!!!</Text></TouchableOpacity>
-      <Text style={styles.paragraph}>{text}</Text>
-    </View>
-  );
-}
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: "#ecf0f1",
+  },
+  button: {
+    flex: 1,
+    backgroundColor: "#000",
+    color: "#fff",
+    fontSize: 18,
   },
   paragraph: {
     margin: 24,
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
   },
+});
+
+console.log("before the task is defined", TaskManager.defineTask);
+TaskManager.defineTask("startLocationUpdatesAsync", ({ data, error }) => {
+  if (error) {
+    console.error("defineTask() err: ", error.message);
+    this.setState({ errorMessage: error });
+
+    Axios.post("https://ironrest.herokuapp.com/covid/", {
+      time: new Date(),
+      error: error.message,
+      deviceName: DEVICE_NAME,
+    });
+
+    return;
+  }
+
+  if (data) {
+    const locations = data?.locations;
+    Axios.post("https://ironrest.herokuapp.com/covid/", {
+      time: new Date(),
+      locations,
+      deviceName: DEVICE_NAME,
+      deviceId: 1337, // It should be DEVICE_ID, but waiting til we have a secure endpoint
+    })
+      .then((res) => {
+        console.log("MongoResponse", {
+          res: res?.data,
+          insertedCount: res?.data?.insertedCount,
+          insertedId: res?.data?.insertedId,
+        });
+        return;
+      })
+      .catch((err) => {
+        console.error("define task error", { err });
+      });
+  }
 });
